@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import YouTube from "react-youtube";
 import io from "socket.io-client";
-import ChatBox from "./ChatBox";
+// import ChatBox from "./ChatBox";
+import Comments from "./Comments";
 import "./style.scss";
 
 export default class VideoPlayer extends Component {
@@ -30,20 +31,6 @@ export default class VideoPlayer extends Component {
       videoID: "9-X67l4vuVY",
       roomID: props.match.params.id
     };
-  }
-
-  componentDidMount() {
-    fetch("/api/hello")
-      .then(res => res.json())
-      .then(data => console.log(data));
-
-    this.setOpts({
-      height: "390",
-      width: "640",
-      playerVars: {
-        autoplay: 1
-      }
-    });
 
     this.socket.emit("changeVideo", { video_id: this.state.videoID });
 
@@ -52,6 +39,20 @@ export default class VideoPlayer extends Component {
 
       if (this.state.videoID !== data) {
         this.setState({ videoID: data });
+      }
+    });
+  }
+
+  componentDidMount() {
+    fetch("/api/hello")
+      .then(res => res.json())
+      .then(data => console.log(data));
+
+    this.setOpts({
+      width: "1280",
+      height: "720",
+      playerVars: {
+        autoplay: 1
       }
     });
   }
@@ -148,7 +149,8 @@ export default class VideoPlayer extends Component {
             onReady={this._onReady}
             onStateChange={evt => this._onStateChange(evt)}
           />
-          <ChatBox roomID={this.state.roomID} />
+          {/* <ChatBox roomID={this.state.roomID} /> */}
+          <Comments roomID={this.state.roomID} />
         </div>
       </div>
     );
