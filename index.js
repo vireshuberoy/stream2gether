@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
 const http = require("http").createServer(app);
@@ -9,10 +10,7 @@ const PORT = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get("/api/hello", (req, res) => {
-  res.send({ message: "hello world" });
-});
+app.use(express.static("client/build"));
 
 io.on("connection", socket => {
   console.log("a user connected");
@@ -37,6 +35,10 @@ io.on("connection", socket => {
     let timeStamp = data;
     io.emit("seekToTimeOnPause", timeStamp);
   });
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
 http.listen(PORT, () => {
