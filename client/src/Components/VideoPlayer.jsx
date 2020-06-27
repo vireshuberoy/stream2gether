@@ -95,7 +95,7 @@ export default class VideoPlayer extends Component {
   _onStateChange(evt) {
     console.log("state changed");
     this.socket.on("changeVideoNowPls", data => {
-      // console.log(data);
+      console.log(data);
 
       // if (evt.target.getVideoData.video_id !== video_id) {
       this.setState({ videoID: data });
