@@ -1,14 +1,28 @@
 import React, { Component } from "react";
 import YouTube from "react-youtube";
-// import socketIOClient from 'socket.io-client';
 import io from "socket.io-client";
 import "./style.scss";
-
-const socket = io();
 
 export default class VideoPlayer extends Component {
   constructor(props) {
     super(props);
+    this.socket = io(`/${props.match.params.id}`);
+
+    const stuff = props.match.params.id;
+
+    this.options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ stuff })
+    };
+
+    fetch("/sendRoomID", this.options)
+      .then(res => res.json())
+      .then(data => console.log(data));
+
+    console.log(props.match.params.id);
 
     this.state = {
       opts: {},
@@ -50,7 +64,7 @@ export default class VideoPlayer extends Component {
 
   playNextVideo(url) {
     const video_id = this.returnVideoID(url);
-    socket.emit("changeVideo", { video_id });
+    this.socket.emit("changeVideo", { video_id });
     this.setState({ videoID: video_id });
   }
 
@@ -58,7 +72,7 @@ export default class VideoPlayer extends Component {
     // console.log(evt);
     console.log("played");
 
-    socket.emit("onPlay", { time: evt.target.getCurrentTime() });
+    this.socket.emit("onPlay", { time: evt.target.getCurrentTime() });
   }
 
   _onReady(evt) {
@@ -70,7 +84,7 @@ export default class VideoPlayer extends Component {
     // console.log(evt);
     const currentTime = evt.target.getCurrentTime();
     console.log("paused");
-    socket.emit("onPause", { message: currentTime });
+    this.socket.emit("onPause", { message: currentTime });
   }
 
   _onSubmit() {
@@ -80,7 +94,7 @@ export default class VideoPlayer extends Component {
 
   _onStateChange(evt) {
     console.log("state changed");
-    socket.on("changeVideoNowPls", data => {
+    this.socket.on("changeVideoNowPls", data => {
       // console.log(data);
 
       // if (evt.target.getVideoData.video_id !== video_id) {
@@ -88,14 +102,14 @@ export default class VideoPlayer extends Component {
       // }
     });
 
-    socket.on("seekToTimeOnPause", data => {
+    this.socket.on("seekToTimeOnPause", data => {
       let timeStamp = data.message;
 
       evt.target.seekTo(timeStamp);
       evt.target.pauseVideo();
     });
 
-    socket.on("justPlay", data => {
+    this.socket.on("justPlay", data => {
       evt.target.playVideo();
     });
   }
