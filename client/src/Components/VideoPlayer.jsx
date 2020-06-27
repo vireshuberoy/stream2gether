@@ -43,6 +43,8 @@ export default class VideoPlayer extends Component {
       }
     });
 
+    this.socket.emit("changeVideo", { video_id: this.state.videoID });
+
     this.socket.on("changeVideoNowPls", data => {
       console.log(data);
 
