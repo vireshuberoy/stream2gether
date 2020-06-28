@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("client/build"));
 
 app.post("/sendRoomID", (req, res) => {
-  console.log(req.body.stuff);
   const nsp = io.of(`/${req.body.stuff}`);
   nsp.on("connection", socket => {
     console.log("a user connected");
@@ -37,6 +36,11 @@ app.post("/sendRoomID", (req, res) => {
     socket.on("onPause", data => {
       let timeStamp = data;
       nsp.emit("seekToTimeOnPause", timeStamp);
+    });
+
+    socket.on("sendingMessage", (msg) => {
+      console.log("the message is: " + msg);
+      nsp.emit("displayMessage", msg);
     });
   });
 

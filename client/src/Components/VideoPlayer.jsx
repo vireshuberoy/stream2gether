@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import YouTube from "react-youtube";
 import io from "socket.io-client";
+import ChatBox from "./ChatBox";
 import "./style.scss";
 
 export default class VideoPlayer extends Component {
@@ -26,7 +27,8 @@ export default class VideoPlayer extends Component {
 
     this.state = {
       opts: {},
-      videoID: "9-X67l4vuVY"
+      videoID: "9-X67l4vuVY",
+      roomID: props.match.params.id
     };
   }
 
@@ -87,7 +89,6 @@ export default class VideoPlayer extends Component {
 
   _onReady(evt) {
     evt.target.pauseVideo();
-    console.log(evt.target);
   }
 
   _onPause(evt) {
@@ -134,7 +135,11 @@ export default class VideoPlayer extends Component {
             <button onClick={evt => this._onSubmit(evt)}>Search</button>
           </div>
           <h1> Video Player </h1>
-          <h3> Please make sure that all people are connected to your room at once, before playing the video, otherwise, your video will be reloaded </h3>
+          <h3>
+            {" "}
+            Please make sure that all people are connected to your room at once,
+            before playing the video, otherwise, your video will be reloaded{" "}
+          </h3>
           <YouTube
             videoId={this.state.videoID}
             opts={this.state.opts}
@@ -143,6 +148,7 @@ export default class VideoPlayer extends Component {
             onReady={this._onReady}
             onStateChange={evt => this._onStateChange(evt)}
           />
+          <ChatBox roomID={this.state.roomID} />
         </div>
       </div>
     );
