@@ -134,6 +134,7 @@ export default class VideoPlayer extends Component {
             <button onClick={evt => this._onSubmit(evt)}>Search</button>
           </div>
           <h1> Video Player </h1>
+          <h3> Please make sure that all people are connected to your room at once, before playing the video, otherwise, your video will be reloaded </h3>
           <YouTube
             videoId={this.state.videoID}
             opts={this.state.opts}
